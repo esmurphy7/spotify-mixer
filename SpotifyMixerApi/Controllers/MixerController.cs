@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SpotifyMixerApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace SpotifyMixerApi.Controllers
 {
@@ -7,28 +8,51 @@ namespace SpotifyMixerApi.Controllers
     [Route("[controller]")]
     public class MixerController : ControllerBase
     {
-        [HttpGet("{id}")]
-        public IActionResult GetMixerById(int id)
+        private readonly MixerDbContext _context;
+
+        public MixerController(MixerDbContext context)
         {
-            return Ok(new { Id = id, Name = $"Mixer {id}" });
+            _context = context;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetMixerById(int id)
+        {
+            var mixer = await _context.Mixers.FindAsync(id);
+            if (mixer == null)
+            {
+                return NotFound();
+            }
+            return Ok(mixer);
         }
 
         [HttpPost]
-        public IActionResult CreateMixer([FromBody] Mixer mixer)
+        public async Task<IActionResult> CreateMixer([FromBody] Mixer mixer)
         {
-            // In a real app, you would save the mixer to a database
+            if (await _context.Mixers.AnyAsync(m => m.Id == mixer.Id))
+            {
+                return Conflict($"Mixer with ID {mixer.Id} already exists.");
+            }
+            _context.Mixers.Add(mixer);
+            await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetMixerById), new { id = mixer.Id }, mixer);
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateMixer(int id, [FromBody] Mixer mixer)
+        public async Task<IActionResult> UpdateMixer(int id, [FromBody] Mixer mixer)
         {
-            // In a real app, you would update the mixer in a database
             if (id != mixer.Id)
             {
                 return BadRequest("ID in URL and body do not match.");
             }
-            return Ok(mixer);
+            var existing = await _context.Mixers.FindAsync(id);
+            if (existing == null)
+            {
+                return NotFound();
+            }
+            existing.Name = mixer.Name;
+            await _context.SaveChangesAsync();
+            return Ok(existing);
         }
     }
 } 
