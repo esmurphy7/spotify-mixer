@@ -67,6 +67,7 @@ namespace SpotifyMixerApi.Controllers
             {
                 return BadRequest(content);
             }
+
             using var doc = JsonDocument.Parse(content);
             var accessToken = doc.RootElement.GetProperty("access_token").GetString() ?? "";
             var refreshToken = doc.RootElement.GetProperty("refresh_token").GetString() ?? "";
@@ -87,6 +88,7 @@ namespace SpotifyMixerApi.Controllers
             {
                 return Ok(new { tokens.accessToken, tokens.refreshToken });
             }
+
             return NotFound();
         }
     }

@@ -23,6 +23,7 @@ namespace SpotifyMixerApi.Controllers
             {
                 return NotFound();
             }
+
             return Ok(mixer);
         }
 
@@ -33,6 +34,7 @@ namespace SpotifyMixerApi.Controllers
             {
                 return Conflict($"Mixer with ID {mixer.Id} already exists.");
             }
+
             _context.Mixers.Add(mixer);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetMixerById), new { id = mixer.Id }, mixer);
@@ -45,11 +47,13 @@ namespace SpotifyMixerApi.Controllers
             {
                 return BadRequest("ID in URL and body do not match.");
             }
+
             var existing = await _context.Mixers.FindAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
+
             existing.Name = mixer.Name;
             await _context.SaveChangesAsync();
             return Ok(existing);
