@@ -1,4 +1,5 @@
 using SpotifyMixerApi.Repositories;
+using Microsoft.Azure.Cosmos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,9 +10,25 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 
 // Register the repository abstraction
-builder.Services.AddSingleton<IMixerRepository, InMemoryMixerRepository>();
-// For production, register CosmosDbMixerRepository here instead
-// builder.Services.AddSingleton<IMixerRepository>(provider => { /* Cosmos DB setup */ });
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddSingleton<IMixerRepository>(provider =>
+    {
+        var config = provider.GetRequiredService<IConfiguration>();
+        var connectionString = config["CosmosDb:ConnectionString"];
+        var databaseId = config["CosmosDb:DatabaseId"];
+        var containerId = config["CosmosDb:ContainerId"];
+        var cosmosClient = new CosmosClient(connectionString);
+        var db = cosmosClient.CreateDatabaseIfNotExistsAsync(databaseId).GetAwaiter().GetResult();
+        db.Database.CreateContainerIfNotExistsAsync(containerId, "/id").GetAwaiter().GetResult();
+        var container = cosmosClient.GetContainer(databaseId, containerId);
+        return new CosmosDbMixerRepository(container);
+    });
+}
+else
+{
+    builder.Services.AddSingleton<IMixerRepository, InMemoryMixerRepository>();
+}
 
 var app = builder.Build();
 
