@@ -11,28 +11,29 @@ public class MixerControllerTheoryTests
     private InMemoryMixerRepository GetInitializedRepo()
     {
         var repo = new InMemoryMixerRepository();
-        repo.AddAsync(new Mixer { id = "1", Name = "A" }).Wait();
-        repo.AddAsync(new Mixer { id = "2", Name = "B" }).Wait();
+        repo.AddAsync(new Mixer { id = "1", Name = "A", Transforms = new List<IPlaylistTransform> { new TakeTransform { Count = 2, FromStart = true } } }).Wait();
+        repo.AddAsync(new Mixer { id = "2", Name = "B", Transforms = new List<IPlaylistTransform> { new AttributeTransform { AttributeName = "genre", AttributeValue = "rock" } } }).Wait();
         return repo;
     }
 
     public static IEnumerable<object[]> ApiTestData()
     {
-        // method, id, expectedResultType, mixer (for Create/Update), expectedName (for Create/Update)
-        yield return new object[] { "GetById", "1", typeof(OkObjectResult), null, null };
-        yield return new object[] { "GetById", "notfound", typeof(NotFoundResult), null, null };
-        yield return new object[] { "Delete", "1", typeof(NoContentResult), null, null };
-        yield return new object[] { "Delete", "notfound", typeof(NotFoundResult), null, null };
-        yield return new object[] { "Create", "3", typeof(CreatedAtActionResult), new Mixer { id = "3", Name = "C" }, "C" };
-        yield return new object[] { "Create", "1", typeof(ConflictObjectResult), new Mixer { id = "1", Name = "A" }, null };
-        yield return new object[] { "Update", "1", typeof(OkObjectResult), new Mixer { id = "1", Name = "A-Updated" }, "A-Updated" };
-        yield return new object[] { "Update", "notfound", typeof(NotFoundResult), new Mixer { id = "notfound", Name = "X" }, null };
-        yield return new object[] { "Update", "mismatch", typeof(BadRequestObjectResult), new Mixer { id = "other", Name = "Mismatch" }, null };
+        // method, id, expectedResultType, mixer (for Create/Update), expectedName (for Create/Update), expectedTransformType
+        yield return new object[] { "GetById", "1", typeof(OkObjectResult), null, null, typeof(TakeTransform) };
+        yield return new object[] { "GetById", "2", typeof(OkObjectResult), null, null, typeof(AttributeTransform) };
+        yield return new object[] { "GetById", "notfound", typeof(NotFoundResult), null, null, null };
+        yield return new object[] { "Delete", "1", typeof(NoContentResult), null, null, null };
+        yield return new object[] { "Delete", "notfound", typeof(NotFoundResult), null, null, null };
+        yield return new object[] { "Create", "3", typeof(CreatedAtActionResult), new Mixer { id = "3", Name = "C", Transforms = new List<IPlaylistTransform> { new OrderTransform { AttributeName = "popularity", Ascending = false } } }, "C", typeof(OrderTransform) };
+        yield return new object[] { "Create", "1", typeof(ConflictObjectResult), new Mixer { id = "1", Name = "A" }, null, null };
+        yield return new object[] { "Update", "1", typeof(OkObjectResult), new Mixer { id = "1", Name = "A-Updated", Transforms = new List<IPlaylistTransform> { new TakeTransform { Count = 5, FromStart = false } } }, "A-Updated", typeof(TakeTransform) };
+        yield return new object[] { "Update", "notfound", typeof(NotFoundResult), new Mixer { id = "notfound", Name = "X" }, null, null };
+        yield return new object[] { "Update", "mismatch", typeof(BadRequestObjectResult), new Mixer { id = "other", Name = "Mismatch" }, null, null };
     }
 
     [Theory]
     [MemberData(nameof(ApiTestData))]
-    public async Task MixerController_ApiTests(string method, string id, System.Type expectedResultType, Mixer mixer, string expectedName)
+    public async Task MixerController_ApiTests(string method, string id, System.Type expectedResultType, Mixer mixer, string expectedName, System.Type expectedTransformType)
     {
         var repo = GetInitializedRepo();
         var controller = new MixersController(repo);
@@ -62,6 +63,8 @@ public class MixerControllerTheoryTests
             var created = Assert.IsType<CreatedAtActionResult>(result);
             var returnedMixer = Assert.IsType<Mixer>(created.Value);
             Assert.Equal(expectedName, returnedMixer.Name);
+            if (expectedTransformType != null)
+                Assert.Contains(returnedMixer.Transforms, t => t.GetType() == expectedTransformType);
         }
         if (expectedResultType == typeof(OkObjectResult))
         {
@@ -69,6 +72,8 @@ public class MixerControllerTheoryTests
             var returnedMixer = Assert.IsType<Mixer>(ok.Value);
             if (expectedName != null)
                 Assert.Equal(expectedName, returnedMixer.Name);
+            if (expectedTransformType != null)
+                Assert.Contains(returnedMixer.Transforms, t => t.GetType() == expectedTransformType);
         }
     }
 } 
