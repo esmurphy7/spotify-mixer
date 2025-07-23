@@ -20,13 +20,13 @@ namespace SpotifyMixerApi.Repositories
 
         public Task AddAsync(Mixer mixer)
         {
-            _mixers[mixer.Id] = mixer;
+            _mixers[mixer.id] = mixer;
             return Task.CompletedTask;
         }
 
         public Task UpdateAsync(Mixer mixer)
         {
-            _mixers[mixer.Id] = mixer;
+            _mixers[mixer.id] = mixer;
             return Task.CompletedTask;
         }
 

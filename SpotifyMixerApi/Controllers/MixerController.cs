@@ -38,20 +38,20 @@ namespace SpotifyMixerApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateMixer([FromBody] Mixer mixer)
         {
-            var existing = await _repository.GetByIdAsync(mixer.Id);
+            var existing = await _repository.GetByIdAsync(mixer.id);
             if (existing != null)
             {
-                return Conflict($"Mixer with ID {mixer.Id} already exists.");
+                return Conflict($"Mixer with ID {mixer.id} already exists.");
             }
 
             await _repository.AddAsync(mixer);
-            return CreatedAtAction(nameof(GetMixerById), new { id = mixer.Id }, mixer);
+            return CreatedAtAction(nameof(GetMixerById), new { id = mixer.id }, mixer);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateMixer(string id, [FromBody] Mixer mixer)
         {
-            if (id != mixer.Id)
+            if (id != mixer.id)
             {
                 return BadRequest("ID in URL and body do not match.");
             }

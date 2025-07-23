@@ -42,12 +42,12 @@ namespace SpotifyMixerApi.Repositories
 
         public async Task AddAsync(Mixer mixer)
         {
-            await _container.CreateItemAsync(mixer, new PartitionKey(mixer.Id));
+            await _container.CreateItemAsync(mixer, new PartitionKey(mixer.id));
         }
 
         public async Task UpdateAsync(Mixer mixer)
         {
-            await _container.UpsertItemAsync(mixer, new PartitionKey(mixer.Id));
+            await _container.UpsertItemAsync(mixer, new PartitionKey(mixer.id));
         }
 
         public async Task DeleteAsync(string id)
