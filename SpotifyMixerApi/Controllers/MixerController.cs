@@ -16,7 +16,7 @@ namespace SpotifyMixerApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetMixerById(int id)
+        public async Task<IActionResult> GetMixerById(string id)
         {
             var mixer = await _repository.GetByIdAsync(id);
             if (mixer == null)
@@ -41,7 +41,7 @@ namespace SpotifyMixerApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateMixer(int id, [FromBody] Mixer mixer)
+        public async Task<IActionResult> UpdateMixer(string id, [FromBody] Mixer mixer)
         {
             if (id != mixer.Id)
             {

@@ -8,11 +8,11 @@ namespace SpotifyMixerApi.Repositories
 {
     public class InMemoryMixerRepository : IMixerRepository
     {
-        private readonly ConcurrentDictionary<int, Mixer> _mixers = new();
+        private readonly ConcurrentDictionary<string, Mixer> _mixers = new();
 
         public Task<List<Mixer>> GetAllAsync() => Task.FromResult(_mixers.Values.ToList());
 
-        public Task<Mixer?> GetByIdAsync(int id)
+        public Task<Mixer?> GetByIdAsync(string id)
         {
             _mixers.TryGetValue(id, out var mixer);
             return Task.FromResult(mixer);
@@ -30,7 +30,7 @@ namespace SpotifyMixerApi.Repositories
             return Task.CompletedTask;
         }
 
-        public Task DeleteAsync(int id)
+        public Task DeleteAsync(string id)
         {
             _mixers.TryRemove(id, out _);
             return Task.CompletedTask;

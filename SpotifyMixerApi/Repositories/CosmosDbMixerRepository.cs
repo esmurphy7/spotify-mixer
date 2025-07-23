@@ -27,11 +27,11 @@ namespace SpotifyMixerApi.Repositories
             return results;
         }
 
-        public async Task<Mixer?> GetByIdAsync(int id)
+        public async Task<Mixer?> GetByIdAsync(string id)
         {
             try
             {
-                var response = await _container.ReadItemAsync<Mixer>(id.ToString(), new PartitionKey(id.ToString()));
+                var response = await _container.ReadItemAsync<Mixer>(id, new PartitionKey(id));
                 return response.Resource;
             }
             catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
@@ -42,17 +42,17 @@ namespace SpotifyMixerApi.Repositories
 
         public async Task AddAsync(Mixer mixer)
         {
-            await _container.CreateItemAsync(mixer, new PartitionKey(mixer.Id.ToString()));
+            await _container.CreateItemAsync(mixer, new PartitionKey(mixer.Id));
         }
 
         public async Task UpdateAsync(Mixer mixer)
         {
-            await _container.UpsertItemAsync(mixer, new PartitionKey(mixer.Id.ToString()));
+            await _container.UpsertItemAsync(mixer, new PartitionKey(mixer.Id));
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(string id)
         {
-            await _container.DeleteItemAsync<Mixer>(id.ToString(), new PartitionKey(id.ToString()));
+            await _container.DeleteItemAsync<Mixer>(id, new PartitionKey(id));
         }
     }
 } 

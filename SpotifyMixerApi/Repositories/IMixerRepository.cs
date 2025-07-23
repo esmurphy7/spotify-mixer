@@ -7,9 +7,9 @@ namespace SpotifyMixerApi.Repositories
     public interface IMixerRepository
     {
         Task<List<Mixer>> GetAllAsync();
-        Task<Mixer?> GetByIdAsync(int id);
+        Task<Mixer?> GetByIdAsync(string id);
         Task AddAsync(Mixer mixer);
         Task UpdateAsync(Mixer mixer);
-        Task DeleteAsync(int id);
+        Task DeleteAsync(string id);
     }
 } 

@@ -1,9 +1,11 @@
+using System.Text.Json.Serialization;
+
 namespace SpotifyMixerApi.Models
 {
     public class Mixer
     {
-        public int Id { get; set; }
-        public string id { get => Id.ToString(); set => Id = int.Parse(value); }
+        [JsonPropertyName("id")]
+        public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
     }
 } 
