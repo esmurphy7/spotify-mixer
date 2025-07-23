@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+using SpotifyMixerApi.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,8 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
-builder.Services.AddDbContext<SpotifyMixerApi.Models.MixerDbContext>(options =>
-    options.UseInMemoryDatabase("MixerDb"));
+
+// Register the repository abstraction
+builder.Services.AddSingleton<IMixerRepository, InMemoryMixerRepository>();
+// For production, register CosmosDbMixerRepository here instead
+// builder.Services.AddSingleton<IMixerRepository>(provider => { /* Cosmos DB setup */ });
 
 var app = builder.Build();
 

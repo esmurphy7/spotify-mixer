@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SpotifyMixerApi.Models;
-using Microsoft.EntityFrameworkCore;
+using SpotifyMixerApi.Repositories;
 
 namespace SpotifyMixerApi.Controllers
 {
@@ -8,17 +8,17 @@ namespace SpotifyMixerApi.Controllers
     [Route("[controller]")]
     public class MixerController : ControllerBase
     {
-        private readonly MixerDbContext _context;
+        private readonly IMixerRepository _repository;
 
-        public MixerController(MixerDbContext context)
+        public MixerController(IMixerRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMixerById(int id)
         {
-            var mixer = await _context.Mixers.FindAsync(id);
+            var mixer = await _repository.GetByIdAsync(id);
             if (mixer == null)
             {
                 return NotFound();
@@ -30,13 +30,13 @@ namespace SpotifyMixerApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateMixer([FromBody] Mixer mixer)
         {
-            if (await _context.Mixers.AnyAsync(m => m.Id == mixer.Id))
+            var existing = await _repository.GetByIdAsync(mixer.Id);
+            if (existing != null)
             {
                 return Conflict($"Mixer with ID {mixer.Id} already exists.");
             }
 
-            _context.Mixers.Add(mixer);
-            await _context.SaveChangesAsync();
+            await _repository.AddAsync(mixer);
             return CreatedAtAction(nameof(GetMixerById), new { id = mixer.Id }, mixer);
         }
 
@@ -48,15 +48,14 @@ namespace SpotifyMixerApi.Controllers
                 return BadRequest("ID in URL and body do not match.");
             }
 
-            var existing = await _context.Mixers.FindAsync(id);
+            var existing = await _repository.GetByIdAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
 
-            existing.Name = mixer.Name;
-            await _context.SaveChangesAsync();
-            return Ok(existing);
+            await _repository.UpdateAsync(mixer);
+            return Ok(mixer);
         }
     }
 } 
