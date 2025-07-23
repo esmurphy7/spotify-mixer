@@ -27,6 +27,14 @@ namespace SpotifyMixerApi.Controllers
             return Ok(mixer);
         }
 
+        [HttpGet]
+        [Route("/mixers")]
+        public async Task<IActionResult> GetAllMixers()
+        {
+            var mixers = await _repository.GetAllAsync();
+            return Ok(mixers);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateMixer([FromBody] Mixer mixer)
         {
