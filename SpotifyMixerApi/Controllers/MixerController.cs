@@ -64,5 +64,17 @@ namespace SpotifyMixerApi.Controllers
             await _repository.UpdateAsync(mixer);
             return Ok(mixer);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMixer(string id)
+        {
+            var existing = await _repository.GetByIdAsync(id);
+            if (existing == null)
+            {
+                return NotFound();
+            }
+            await _repository.DeleteAsync(id);
+            return NoContent();
+        }
     }
 } 
