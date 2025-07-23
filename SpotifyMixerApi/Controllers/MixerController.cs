@@ -6,11 +6,11 @@ namespace SpotifyMixerApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class MixerController : ControllerBase
+    public class MixersController : ControllerBase
     {
         private readonly IMixerRepository _repository;
 
-        public MixerController(IMixerRepository repository)
+        public MixersController(IMixerRepository repository)
         {
             _repository = repository;
         }
@@ -28,7 +28,6 @@ namespace SpotifyMixerApi.Controllers
         }
 
         [HttpGet]
-        [Route("/mixers")]
         public async Task<IActionResult> GetAllMixers()
         {
             var mixers = await _repository.GetAllAsync();
