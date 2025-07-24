@@ -1,5 +1,4 @@
 using SpotifyMixerApi.Models;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SpotifyMixerApi.Services
@@ -13,14 +12,14 @@ namespace SpotifyMixerApi.Services
             _spotifyService = spotifyService;
         }
 
-        public async Task<List<SpotifyTrack>> GetPlaylistTracksAsync(string playlistId)
+        public async Task<SpotifyPlaylist> GetPlaylistAsync(string playlistId)
         {
             if (string.IsNullOrEmpty(playlistId))
             {
                 throw new ArgumentException("Playlist ID cannot be null or empty", nameof(playlistId));
             }
 
-            return await _spotifyService.GetPlaylistTracksAsync(playlistId);
+            return await _spotifyService.GetPlaylistAsync(playlistId);
         }
     }
 } 
