@@ -1,4 +1,5 @@
 using SpotifyMixerApi.Repositories;
+using SpotifyMixerApi.Services;
 using Microsoft.Azure.Cosmos;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,6 +33,14 @@ else
 {
     builder.Services.AddSingleton<IMixerRepository, InMemoryMixerRepository>();
 }
+
+// Register playlist services
+builder.Services.AddScoped<IPlaylistProvider, SpotifyPlaylistProvider>();
+builder.Services.AddScoped<IPlaylistMixer, PlaylistMixer>();
+builder.Services.AddScoped<IPlaylistOrchestrator, PlaylistOrchestrator>();
+
+// Register mock Spotify service for development/testing
+builder.Services.AddScoped<ISpotifyService, MockSpotifyService>();
 
 var app = builder.Build();
 

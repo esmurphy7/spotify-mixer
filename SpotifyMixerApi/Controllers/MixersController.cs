@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SpotifyMixerApi.Models;
 using SpotifyMixerApi.Repositories;
+using SpotifyMixerApi.Services;
 
 namespace SpotifyMixerApi.Controllers
 {
@@ -9,10 +10,12 @@ namespace SpotifyMixerApi.Controllers
     public class MixersController : ControllerBase
     {
         private readonly IMixerRepository _repository;
+        private readonly IPlaylistOrchestrator _playlistOrchestrator;
 
-        public MixersController(IMixerRepository repository)
+        public MixersController(IMixerRepository repository, IPlaylistOrchestrator playlistOrchestrator)
         {
             _repository = repository;
+            _playlistOrchestrator = playlistOrchestrator;
         }
 
         [HttpGet("{id}")]
@@ -75,6 +78,36 @@ namespace SpotifyMixerApi.Controllers
             }
             await _repository.DeleteAsync(id);
             return NoContent();
+        }
+
+        [HttpPost("{id}/mix")]
+        public async Task<IActionResult> MixPlaylist(string id)
+        {
+            var mixer = await _repository.GetByIdAsync(id);
+            if (mixer == null)
+            {
+                return NotFound($"Mixer with id '{id}' not found");
+            }
+
+            if (string.IsNullOrEmpty(mixer.SrcPlaylistId))
+            {
+                return BadRequest("Mixer does not have a source playlist ID configured");
+            }
+
+            try
+            {
+                var mixedTracks = await _playlistOrchestrator.MixPlaylistAsync(mixer.SrcPlaylistId, mixer);
+                return Ok(new { 
+                    mixerId = id, 
+                    sourcePlaylistId = mixer.SrcPlaylistId, 
+                    trackCount = mixedTracks.Count,
+                    tracks = mixedTracks 
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 } 
