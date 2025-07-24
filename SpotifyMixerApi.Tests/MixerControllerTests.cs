@@ -10,20 +10,49 @@ using System.Threading.Tasks;
 namespace SpotifyMixerApi.Tests
 {
     public class MixerControllerTheoryTests
-{
-    private InMemoryMixerRepository GetInitializedRepo()
     {
-        var repo = new InMemoryMixerRepository();
-        repo.AddAsync(new Mixer { id = "1", Name = "A", SrcPlaylistId = "playlist-1", Transforms = new List<IPlaylistTransform> { new TakeTransform { Count = 2, FromStart = true } } }).Wait();
-        repo.AddAsync(new Mixer { id = "2", Name = "B", SrcPlaylistId = "playlist-2", Transforms = new List<IPlaylistTransform> { new AttributeTransform { AttributeName = "genre", AttributeValue = "rock" } } }).Wait();
-        repo.AddAsync(new Mixer { id = "3", Name = "C", SrcPlaylistId = "", Transforms = new List<IPlaylistTransform> { new OrderTransform { AttributeName = "popularity", Ascending = false } } }).Wait();
-        return repo;
-    }
+        private InMemoryMixerRepository GetInitializedRepo()
+        {
+            var repo = new InMemoryMixerRepository();
+            repo.AddAsync(new Mixer { id = "1", Name = "A", SrcPlaylistId = "playlist-1", Transforms = new List<IPlaylistTransform> { new TakeTransform { Count = 2, FromStart = true } } }).Wait();
+            repo.AddAsync(new Mixer { id = "2", Name = "B", SrcPlaylistId = "playlist-2", Transforms = new List<IPlaylistTransform> { new AttributeTransform { AttributeName = "genre", AttributeValue = "rock" } } }).Wait();
+            repo.AddAsync(new Mixer { id = "3", Name = "C", SrcPlaylistId = "", Transforms = new List<IPlaylistTransform> { new OrderTransform { AttributeName = "popularity", Ascending = false } } }).Wait();
+            return repo;
+        }
 
-    private MockPlaylistOrchestrator GetMockOrchestrator()
-    {
-        return new MockPlaylistOrchestrator();
-    }
+        private IPlaylistRepository GetPlaylistRepository()
+        {
+            var repo = new InMemoryPlaylistRepository();
+            
+            // Add test playlists
+            repo.AddPlaylist("playlist-1", new List<Track>
+            {
+                new Track { id = "1", Name = "Mock Track 1", Attributes = new Dictionary<string, object> { { "genre", "rock" }, { "popularity", 75 } } },
+                new Track { id = "2", Name = "Mock Track 2", Attributes = new Dictionary<string, object> { { "genre", "pop" }, { "popularity", 85 } } },
+                new Track { id = "3", Name = "Mock Track 3", Attributes = new Dictionary<string, object> { { "genre", "jazz" }, { "popularity", 65 } } },
+                new Track { id = "4", Name = "Mock Track 4", Attributes = new Dictionary<string, object> { { "genre", "rock" }, { "popularity", 90 } } },
+                new Track { id = "5", Name = "Mock Track 5", Attributes = new Dictionary<string, object> { { "genre", "pop" }, { "popularity", 70 } } }
+            });
+
+            repo.AddPlaylist("playlist-2", new List<Track>
+            {
+                new Track { id = "6", Name = "Rock Track 1", Attributes = new Dictionary<string, object> { { "genre", "rock" }, { "popularity", 80 } } },
+                new Track { id = "7", Name = "Rock Track 2", Attributes = new Dictionary<string, object> { { "genre", "rock" }, { "popularity", 85 } } },
+                new Track { id = "8", Name = "Pop Track 1", Attributes = new Dictionary<string, object> { { "genre", "pop" }, { "popularity", 90 } } }
+            });
+
+            return repo;
+        }
+
+        private IPlaylistMixer GetPlaylistMixer()
+        {
+            return new PlaylistMixer();
+        }
+
+        private IPlaylistOrchestrator GetPlaylistOrchestrator()
+        {
+            return new PlaylistOrchestrator(GetPlaylistRepository(), GetPlaylistMixer());
+        }
 
     public static IEnumerable<object[]> ApiTestData()
     {
@@ -45,7 +74,7 @@ namespace SpotifyMixerApi.Tests
     public async Task MixerController_ApiTests(string method, string id, System.Type expectedResultType, Mixer mixer, string expectedName, System.Type expectedTransformType)
     {
         var repo = GetInitializedRepo();
-        var orchestrator = GetMockOrchestrator();
+        var orchestrator = GetPlaylistOrchestrator();
         var controller = new MixersController(repo, orchestrator);
         IActionResult result = null;
 
@@ -92,7 +121,7 @@ namespace SpotifyMixerApi.Tests
     {
         // Arrange
         var repo = GetInitializedRepo();
-        var orchestrator = GetMockOrchestrator();
+        var orchestrator = GetPlaylistOrchestrator();
         var controller = new MixersController(repo, orchestrator);
 
         // Act
@@ -123,7 +152,7 @@ namespace SpotifyMixerApi.Tests
     {
         // Arrange
         var repo = GetInitializedRepo();
-        var orchestrator = GetMockOrchestrator();
+        var orchestrator = GetPlaylistOrchestrator();
         var controller = new MixersController(repo, orchestrator);
 
         // Act
@@ -138,7 +167,7 @@ namespace SpotifyMixerApi.Tests
     {
         // Arrange
         var repo = GetInitializedRepo();
-        var orchestrator = GetMockOrchestrator();
+        var orchestrator = GetPlaylistOrchestrator();
         var controller = new MixersController(repo, orchestrator);
 
         // Act
@@ -153,7 +182,7 @@ namespace SpotifyMixerApi.Tests
     {
         // Arrange
         var repo = GetInitializedRepo();
-        var orchestrator = new MockPlaylistOrchestrator(); // This will throw on empty playlistId
+        var orchestrator = GetPlaylistOrchestrator(); // This will throw on empty playlistId
         var controller = new MixersController(repo, orchestrator);
 
         // Act & Assert
