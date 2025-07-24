@@ -1,9 +1,10 @@
+using System.Threading.Tasks;
 using SpotifyMixerApi.Models;
 
 namespace SpotifyMixerApi.Repositories
 {
     public interface IPlaylistRepository
     {
-        Task<List<Track>> GetPlaylistTracksAsync(string playlistId);
+        Task<SpotifyPlaylist> GetPlaylistAsync(string playlistId);
     }
 } 

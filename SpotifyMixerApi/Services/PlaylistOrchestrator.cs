@@ -1,11 +1,14 @@
 using SpotifyMixerApi.Models;
 using SpotifyMixerApi.Repositories;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace SpotifyMixerApi.Services
 {
     public interface IPlaylistOrchestrator
     {
-        Task<List<Track>> MixPlaylistAsync(string playlistId, Mixer mixer);
+        Task<SpotifyPlaylist> MixPlaylistAsync(string playlistId, Mixer mixer);
     }
 
     public class PlaylistOrchestrator : IPlaylistOrchestrator
@@ -19,15 +22,42 @@ namespace SpotifyMixerApi.Services
             _playlistMixer = playlistMixer;
         }
 
-        public async Task<List<Track>> MixPlaylistAsync(string playlistId, Mixer mixer)
+        public async Task<SpotifyPlaylist> MixPlaylistAsync(string playlistId, Mixer mixer)
         {
-            // 1. Fetch tracks from playlist repository
-            var tracks = await _playlistRepository.GetPlaylistTracksAsync(playlistId);
-            
-            // 2. Apply mixer transforms
-            var mixedTracks = _playlistMixer.MixPlaylist(tracks, mixer);
-            
-            return mixedTracks;
+            var playlist = await _playlistRepository.GetPlaylistAsync(playlistId);
+            if (playlist == null || playlist.Tracks == null)
+                return null;
+
+            var originalTracks = playlist.Tracks.Items.Select(i => i.Track).ToList();
+            var mixedTracks = _playlistMixer.MixPlaylist(originalTracks, mixer);
+
+            // Return a new playlist object with mixed tracks
+            var mixedPlaylist = new SpotifyPlaylist
+            {
+                Collaborative = playlist.Collaborative,
+                Description = playlist.Description,
+                External_Urls = playlist.External_Urls,
+                Href = playlist.Href,
+                Id = playlist.Id,
+                Images = playlist.Images,
+                Name = playlist.Name + " (Mixed)",
+                Owner = playlist.Owner,
+                Public = playlist.Public,
+                Snapshot_Id = playlist.Snapshot_Id,
+                Type = playlist.Type,
+                Uri = playlist.Uri,
+                Tracks = new SpotifyPlaylistTracks
+                {
+                    Href = playlist.Tracks.Href,
+                    Limit = playlist.Tracks.Limit,
+                    Next = playlist.Tracks.Next,
+                    Offset = playlist.Tracks.Offset,
+                    Previous = playlist.Tracks.Previous,
+                    Total = mixedTracks.Count,
+                    Items = mixedTracks.Select(t => new SpotifyPlaylistTrackItem { Track = t }).ToList()
+                }
+            };
+            return mixedPlaylist;
         }
     }
 } 

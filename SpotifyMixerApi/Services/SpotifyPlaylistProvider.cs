@@ -1,4 +1,6 @@
 using SpotifyMixerApi.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SpotifyMixerApi.Services
 {
@@ -11,7 +13,7 @@ namespace SpotifyMixerApi.Services
             _spotifyService = spotifyService;
         }
 
-        public async Task<List<Track>> GetPlaylistTracksAsync(string playlistId)
+        public async Task<List<SpotifyTrack>> GetPlaylistTracksAsync(string playlistId)
         {
             if (string.IsNullOrEmpty(playlistId))
             {

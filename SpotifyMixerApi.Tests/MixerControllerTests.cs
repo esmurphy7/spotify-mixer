@@ -6,6 +6,7 @@ using SpotifyMixerApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace SpotifyMixerApi.Tests
 {
@@ -15,7 +16,7 @@ namespace SpotifyMixerApi.Tests
         {
             var repo = new InMemoryMixerRepository();
             repo.AddAsync(new Mixer { id = "1", Name = "A", SrcPlaylistId = "playlist-1", Transforms = new List<IPlaylistTransform> { new TakeTransform { Count = 2, FromStart = true } } }).Wait();
-            repo.AddAsync(new Mixer { id = "2", Name = "B", SrcPlaylistId = "playlist-2", Transforms = new List<IPlaylistTransform> { new AttributeTransform { AttributeName = "genre", AttributeValue = "rock" } } }).Wait();
+            repo.AddAsync(new Mixer { id = "2", Name = "B", SrcPlaylistId = "playlist-2", Transforms = new List<IPlaylistTransform> { new AttributeTransform { AttributeName = "artist", AttributeValue = "Artist 1" } } }).Wait();
             repo.AddAsync(new Mixer { id = "3", Name = "C", SrcPlaylistId = "", Transforms = new List<IPlaylistTransform> { new OrderTransform { AttributeName = "popularity", Ascending = false } } }).Wait();
             return repo;
         }
@@ -23,24 +24,37 @@ namespace SpotifyMixerApi.Tests
         private IPlaylistRepository GetPlaylistRepository()
         {
             var repo = new InMemoryPlaylistRepository();
-            
             // Add test playlists
-            repo.AddPlaylist("playlist-1", new List<Track>
+            repo.AddPlaylist("playlist-1", new SpotifyPlaylist
             {
-                new Track { id = "1", Name = "Mock Track 1", Attributes = new Dictionary<string, object> { { "genre", "rock" }, { "popularity", 75 } } },
-                new Track { id = "2", Name = "Mock Track 2", Attributes = new Dictionary<string, object> { { "genre", "pop" }, { "popularity", 85 } } },
-                new Track { id = "3", Name = "Mock Track 3", Attributes = new Dictionary<string, object> { { "genre", "jazz" }, { "popularity", 65 } } },
-                new Track { id = "4", Name = "Mock Track 4", Attributes = new Dictionary<string, object> { { "genre", "rock" }, { "popularity", 90 } } },
-                new Track { id = "5", Name = "Mock Track 5", Attributes = new Dictionary<string, object> { { "genre", "pop" }, { "popularity", 70 } } }
+                Id = "playlist-1",
+                Name = "Test Playlist 1",
+                Tracks = new SpotifyPlaylistTracks
+                {
+                    Items = new List<SpotifyPlaylistTrackItem>
+                    {
+                        new SpotifyPlaylistTrackItem { Track = new SpotifyTrack { Id = "1", Name = "Mock Track 1", Popularity = 75, Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 1" } }, Album = new SpotifyAlbum { Name = "Album 1" } } },
+                        new SpotifyPlaylistTrackItem { Track = new SpotifyTrack { Id = "2", Name = "Mock Track 2", Popularity = 85, Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 2" } }, Album = new SpotifyAlbum { Name = "Album 2" } } },
+                        new SpotifyPlaylistTrackItem { Track = new SpotifyTrack { Id = "3", Name = "Mock Track 3", Popularity = 65, Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 3" } }, Album = new SpotifyAlbum { Name = "Album 3" } } },
+                        new SpotifyPlaylistTrackItem { Track = new SpotifyTrack { Id = "4", Name = "Mock Track 4", Popularity = 90, Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 4" } }, Album = new SpotifyAlbum { Name = "Album 4" } } },
+                        new SpotifyPlaylistTrackItem { Track = new SpotifyTrack { Id = "5", Name = "Mock Track 5", Popularity = 70, Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 5" } }, Album = new SpotifyAlbum { Name = "Album 5" } } }
+                    }
+                }
             });
-
-            repo.AddPlaylist("playlist-2", new List<Track>
+            repo.AddPlaylist("playlist-2", new SpotifyPlaylist
             {
-                new Track { id = "6", Name = "Rock Track 1", Attributes = new Dictionary<string, object> { { "genre", "rock" }, { "popularity", 80 } } },
-                new Track { id = "7", Name = "Rock Track 2", Attributes = new Dictionary<string, object> { { "genre", "rock" }, { "popularity", 85 } } },
-                new Track { id = "8", Name = "Pop Track 1", Attributes = new Dictionary<string, object> { { "genre", "pop" }, { "popularity", 90 } } }
+                Id = "playlist-2",
+                Name = "Test Playlist 2",
+                Tracks = new SpotifyPlaylistTracks
+                {
+                    Items = new List<SpotifyPlaylistTrackItem>
+                    {
+                        new SpotifyPlaylistTrackItem { Track = new SpotifyTrack { Id = "6", Name = "Rock Track 1", Popularity = 80, Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Rock Artist 1" } }, Album = new SpotifyAlbum { Name = "Rock Album 1" } } },
+                        new SpotifyPlaylistTrackItem { Track = new SpotifyTrack { Id = "7", Name = "Rock Track 2", Popularity = 85, Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Rock Artist 2" } }, Album = new SpotifyAlbum { Name = "Rock Album 2" } } },
+                        new SpotifyPlaylistTrackItem { Track = new SpotifyTrack { Id = "8", Name = "Pop Track 1", Popularity = 90, Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Pop Artist 1" } }, Album = new SpotifyAlbum { Name = "Pop Album 1" } } }
+                    }
+                }
             });
-
             return repo;
         }
 
@@ -130,21 +144,13 @@ namespace SpotifyMixerApi.Tests
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
         var response = okResult.Value;
-        
-        // Use reflection to access anonymous type properties
-        var mixerIdProperty = response.GetType().GetProperty("mixerId");
-        var sourcePlaylistIdProperty = response.GetType().GetProperty("sourcePlaylistId");
-        var trackCountProperty = response.GetType().GetProperty("trackCount");
-        var tracksProperty = response.GetType().GetProperty("tracks");
-
-        Assert.NotNull(mixerIdProperty);
-        Assert.NotNull(sourcePlaylistIdProperty);
-        Assert.NotNull(trackCountProperty);
-        Assert.NotNull(tracksProperty);
-
-        Assert.Equal("1", mixerIdProperty.GetValue(response));
-        Assert.Equal("playlist-1", sourcePlaylistIdProperty.GetValue(response));
-        Assert.Equal(2, trackCountProperty.GetValue(response)); // TakeTransform with Count=2 should return 2 tracks
+        var playlistProperty = response.GetType().GetProperty("playlist");
+        Assert.NotNull(playlistProperty);
+        var playlist = playlistProperty.GetValue(response) as SpotifyPlaylist;
+        Assert.NotNull(playlist);
+        Assert.Equal("playlist-1", playlist.Id);
+        Assert.Equal("Test Playlist 1 (Mixed)", playlist.Name);
+        Assert.Equal(2, playlist.Tracks.Items.Count); // TakeTransform with Count=2 should return 2 tracks
     }
 
     [Fact]

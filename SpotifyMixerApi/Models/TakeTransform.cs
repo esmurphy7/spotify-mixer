@@ -9,7 +9,7 @@ namespace SpotifyMixerApi.Models
         public int Count { get; set; }
         public bool FromStart { get; set; } = true;
 
-        public List<Track> Transform(List<Track> tracks)
+        public List<SpotifyTrack> Transform(List<SpotifyTrack> tracks)
         {
             if (FromStart)
                 return tracks.Take(Count).ToList();

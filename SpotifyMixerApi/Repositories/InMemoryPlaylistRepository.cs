@@ -1,31 +1,29 @@
 using SpotifyMixerApi.Models;
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace SpotifyMixerApi.Repositories
 {
     public class InMemoryPlaylistRepository : IPlaylistRepository
     {
-        private readonly Dictionary<string, List<Track>> _playlists = new();
+        private readonly ConcurrentDictionary<string, SpotifyPlaylist> _playlists = new();
 
-        public Task<List<Track>> GetPlaylistTracksAsync(string playlistId)
+        public Task<SpotifyPlaylist> GetPlaylistAsync(string playlistId)
         {
             if (string.IsNullOrEmpty(playlistId))
-            {
                 throw new ArgumentException("Playlist ID cannot be null or empty", nameof(playlistId));
-            }
 
-            if (_playlists.TryGetValue(playlistId, out var tracks))
-            {
-                return Task.FromResult(new List<Track>(tracks));
-            }
+            if (_playlists.TryGetValue(playlistId, out var playlist))
+                return Task.FromResult(playlist);
 
-            // Return empty list for non-existent playlists
-            return Task.FromResult(new List<Track>());
+            // Return an empty playlist if not found
+            return Task.FromResult<SpotifyPlaylist>(null);
         }
 
-        // Helper method for tests to add custom playlists
-        public void AddPlaylist(string playlistId, List<Track> tracks)
+        // Helper for tests
+        public void AddPlaylist(string playlistId, SpotifyPlaylist playlist)
         {
-            _playlists[playlistId] = new List<Track>(tracks);
+            _playlists[playlistId] = playlist;
         }
     }
 } 

@@ -96,12 +96,13 @@ namespace SpotifyMixerApi.Controllers
 
             try
             {
-                var mixedTracks = await _playlistOrchestrator.MixPlaylistAsync(mixer.SrcPlaylistId, mixer);
-                return Ok(new { 
-                    mixerId = id, 
-                    sourcePlaylistId = mixer.SrcPlaylistId, 
-                    trackCount = mixedTracks.Count,
-                    tracks = mixedTracks 
+                var mixedPlaylist = await _playlistOrchestrator.MixPlaylistAsync(mixer.SrcPlaylistId, mixer);
+                if (mixedPlaylist == null)
+                    return NotFound("Source playlist not found");
+                return Ok(new {
+                    mixerId = id,
+                    sourcePlaylistId = mixer.SrcPlaylistId,
+                    playlist = mixedPlaylist
                 });
             }
             catch (ArgumentException ex)

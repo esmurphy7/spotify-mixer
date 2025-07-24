@@ -4,16 +4,16 @@ namespace SpotifyMixerApi.Services
 {
     public class MockSpotifyService : ISpotifyService
     {
-        public Task<List<Track>> GetPlaylistTracksAsync(string playlistId)
+        public Task<List<SpotifyTrack>> GetPlaylistTracksAsync(string playlistId)
         {
             // Return mock data for testing
-            var tracks = new List<Track>
+            var tracks = new List<SpotifyTrack>
             {
-                new Track { id = "1", Name = "Mock Track 1", Attributes = new Dictionary<string, object> { { "genre", "rock" }, { "popularity", 75 } } },
-                new Track { id = "2", Name = "Mock Track 2", Attributes = new Dictionary<string, object> { { "genre", "pop" }, { "popularity", 85 } } },
-                new Track { id = "3", Name = "Mock Track 3", Attributes = new Dictionary<string, object> { { "genre", "jazz" }, { "popularity", 65 } } },
-                new Track { id = "4", Name = "Mock Track 4", Attributes = new Dictionary<string, object> { { "genre", "rock" }, { "popularity", 90 } } },
-                new Track { id = "5", Name = "Mock Track 5", Attributes = new Dictionary<string, object> { { "genre", "pop" }, { "popularity", 70 } } }
+                new SpotifyTrack { Id = "1", Name = "Mock Track 1", Popularity = 75, Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 1" } }, Album = new SpotifyAlbum { Name = "Album 1" } },
+                new SpotifyTrack { Id = "2", Name = "Mock Track 2", Popularity = 85, Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 2" } }, Album = new SpotifyAlbum { Name = "Album 2" } },
+                new SpotifyTrack { Id = "3", Name = "Mock Track 3", Popularity = 65, Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 3" } }, Album = new SpotifyAlbum { Name = "Album 3" } },
+                new SpotifyTrack { Id = "4", Name = "Mock Track 4", Popularity = 90, Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 4" } }, Album = new SpotifyAlbum { Name = "Album 4" } },
+                new SpotifyTrack { Id = "5", Name = "Mock Track 5", Popularity = 70, Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 5" } }, Album = new SpotifyAlbum { Name = "Album 5" } }
             };
 
             return Task.FromResult(tracks);
@@ -25,7 +25,7 @@ namespace SpotifyMixerApi.Services
             return Task.FromResult($"mock-playlist-{Guid.NewGuid()}");
         }
 
-        public Task AddTracksToPlaylistAsync(string playlistId, List<Track> tracks)
+        public Task AddTracksToPlaylistAsync(string playlistId, List<SpotifyTrack> tracks)
         {
             // Mock implementation - in a real service, this would call Spotify API
             return Task.CompletedTask;

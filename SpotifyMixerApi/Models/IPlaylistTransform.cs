@@ -4,6 +4,6 @@ namespace SpotifyMixerApi.Models
 {
     public interface IPlaylistTransform
     {
-        List<Track> Transform(List<Track> tracks);
+        List<SpotifyTrack> Transform(List<SpotifyTrack> tracks);
     }
 } 

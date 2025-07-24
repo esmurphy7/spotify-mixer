@@ -5,12 +5,12 @@ using System.Linq;
 
 public class TransformTests
 {
-    private readonly List<Track> SampleTracks = new()
+    private readonly List<SpotifyTrack> SampleTracks = new()
     {
-        new Track { id = "1", Name = "Track1", Attributes = new Dictionary<string, object> { { "genre", "rock" }, { "popularity", 10 } } },
-        new Track { id = "2", Name = "Track2", Attributes = new Dictionary<string, object> { { "genre", "pop" }, { "popularity", 20 } } },
-        new Track { id = "3", Name = "Track3", Attributes = new Dictionary<string, object> { { "genre", "rock" }, { "popularity", 30 } } },
-        new Track { id = "4", Name = "Track4", Attributes = new Dictionary<string, object> { { "genre", "jazz" }, { "popularity", 40 } } },
+        new SpotifyTrack { Id = "1", Name = "Track1", Popularity = 10, Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 1" } }, Album = new SpotifyAlbum { Name = "Album 1" } },
+        new SpotifyTrack { Id = "2", Name = "Track2", Popularity = 20, Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 2" } }, Album = new SpotifyAlbum { Name = "Album 2" } },
+        new SpotifyTrack { Id = "3", Name = "Track3", Popularity = 30, Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 1" } }, Album = new SpotifyAlbum { Name = "Album 3" } },
+        new SpotifyTrack { Id = "4", Name = "Track4", Popularity = 40, Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 3" } }, Album = new SpotifyAlbum { Name = "Album 4" } },
     };
 
     [Fact]
@@ -19,8 +19,8 @@ public class TransformTests
         var transform = new TakeTransform { Count = 2, FromStart = true };
         var result = transform.Transform(SampleTracks);
         Assert.Equal(2, result.Count);
-        Assert.Equal("1", result[0].id);
-        Assert.Equal("2", result[1].id);
+        Assert.Equal("1", result[0].Id);
+        Assert.Equal("2", result[1].Id);
     }
 
     [Fact]
@@ -29,23 +29,23 @@ public class TransformTests
         var transform = new TakeTransform { Count = 2, FromStart = false };
         var result = transform.Transform(SampleTracks);
         Assert.Equal(2, result.Count);
-        Assert.Equal("3", result[0].id);
-        Assert.Equal("4", result[1].id);
+        Assert.Equal("3", result[0].Id);
+        Assert.Equal("4", result[1].Id);
     }
 
     [Fact]
     public void AttributeTransform_FiltersByAttribute()
     {
-        var transform = new AttributeTransform { AttributeName = "genre", AttributeValue = "rock" };
+        var transform = new AttributeTransform { AttributeName = "artist", AttributeValue = "Artist 1" };
         var result = transform.Transform(SampleTracks);
         Assert.Equal(2, result.Count);
-        Assert.All(result, t => Assert.Equal("rock", t.Attributes["genre"]));
+        Assert.All(result, t => Assert.Equal("Artist 1", t.Artists.First().Name));
     }
 
     [Fact]
     public void AttributeTransform_ReturnsEmptyIfNoMatch()
     {
-        var transform = new AttributeTransform { AttributeName = "genre", AttributeValue = "classical" };
+        var transform = new AttributeTransform { AttributeName = "artist", AttributeValue = "Nonexistent" };
         var result = transform.Transform(SampleTracks);
         Assert.Empty(result);
     }
@@ -55,7 +55,7 @@ public class TransformTests
     {
         var transform = new OrderTransform { AttributeName = "popularity", Ascending = true };
         var result = transform.Transform(SampleTracks);
-        Assert.Equal(new[] { "1", "2", "3", "4" }, result.Select(t => t.id));
+        Assert.Equal(new[] { "1", "2", "3", "4" }, result.Select(t => t.Id));
     }
 
     [Fact]
@@ -63,6 +63,6 @@ public class TransformTests
     {
         var transform = new OrderTransform { AttributeName = "popularity", Ascending = false };
         var result = transform.Transform(SampleTracks);
-        Assert.Equal(new[] { "4", "3", "2", "1" }, result.Select(t => t.id));
+        Assert.Equal(new[] { "4", "3", "2", "1" }, result.Select(t => t.Id));
     }
 } 

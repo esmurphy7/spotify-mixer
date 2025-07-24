@@ -1,11 +1,13 @@
 using SpotifyMixerApi.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SpotifyMixerApi.Services
 {
     public interface ISpotifyService
     {
-        Task<List<Track>> GetPlaylistTracksAsync(string playlistId);
+        Task<List<SpotifyTrack>> GetPlaylistTracksAsync(string playlistId);
         Task<string> CreatePlaylistAsync(string name, string userId);
-        Task AddTracksToPlaylistAsync(string playlistId, List<Track> tracks);
+        Task AddTracksToPlaylistAsync(string playlistId, List<SpotifyTrack> tracks);
     }
 } 
