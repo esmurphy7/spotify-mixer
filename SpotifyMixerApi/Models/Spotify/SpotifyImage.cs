@@ -1,4 +1,4 @@
-namespace SpotifyMixerApi.Models
+namespace SpotifyMixerApi.Models.Spotify
 {
     public class SpotifyImage
     {

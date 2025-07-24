@@ -2,6 +2,8 @@ using Xunit;
 using SpotifyMixerApi.Models;
 using System.Collections.Generic;
 using System.Linq;
+using SpotifyMixerApi.Models.Transforms;
+using SpotifyMixerApi.Models.Spotify;
 
 public class TransformTests
 {

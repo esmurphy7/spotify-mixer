@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using SpotifyMixerApi.Models;
+using SpotifyMixerApi.Models.Spotify;
 
 namespace SpotifyMixerApi.Repositories
 {

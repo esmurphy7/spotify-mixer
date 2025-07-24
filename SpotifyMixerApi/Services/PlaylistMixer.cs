@@ -1,4 +1,5 @@
 using SpotifyMixerApi.Models;
+using SpotifyMixerApi.Models.Spotify;
 using System.Collections.Generic;
 
 namespace SpotifyMixerApi.Services

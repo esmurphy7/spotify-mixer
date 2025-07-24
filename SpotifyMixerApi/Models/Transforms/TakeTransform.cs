@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SpotifyMixerApi.Models.Spotify;
 
-namespace SpotifyMixerApi.Models
+namespace SpotifyMixerApi.Models.Transforms
 {
     public class TakeTransform : IPlaylistTransform
     {

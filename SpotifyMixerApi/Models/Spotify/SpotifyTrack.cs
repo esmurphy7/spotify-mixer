@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace SpotifyMixerApi.Models
+namespace SpotifyMixerApi.Models.Spotify
 {
     public class SpotifyTrack
     {

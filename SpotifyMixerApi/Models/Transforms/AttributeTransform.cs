@@ -1,19 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
+using SpotifyMixerApi.Models.Spotify;
 
-namespace SpotifyMixerApi.Models
+namespace SpotifyMixerApi.Models.Transforms
 {
-    public class OrderTransform : IPlaylistTransform
+    public class AttributeTransform : IPlaylistTransform
     {
         public string AttributeName { get; set; }
-        public bool Ascending { get; set; } = true;
+        public object AttributeValue { get; set; }
 
         public List<SpotifyTrack> Transform(List<SpotifyTrack> tracks)
         {
-            if (Ascending)
-                return tracks.OrderBy(track => GetTrackAttribute(track, AttributeName)).ToList();
-            else
-                return tracks.OrderByDescending(track => GetTrackAttribute(track, AttributeName)).ToList();
+            return tracks.Where(track =>
+                GetTrackAttribute(track, AttributeName)?.Equals(AttributeValue) == true
+            ).ToList();
         }
 
         private object GetTrackAttribute(SpotifyTrack track, string attributeName)
@@ -22,11 +22,11 @@ namespace SpotifyMixerApi.Models
             {
                 "popularity" => track.Popularity,
                 "duration_ms" => track.Duration_Ms,
-                "name" => track.Name,
-                "artist" => track.Artists.FirstOrDefault()?.Name ?? "",
+                "explicit" => track.Explicit,
+                "artist" => track.Artists.FirstOrDefault()?.Name,
                 "album" => track.Album.Name,
                 "release_date" => track.Album.Release_Date,
-                _ => ""
+                _ => null
             };
         }
     }
