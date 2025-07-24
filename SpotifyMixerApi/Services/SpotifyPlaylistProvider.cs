@@ -1,16 +1,17 @@
 using SpotifyMixerApi.Models;
 using SpotifyMixerApi.Models.Spotify;
+using SpotifyMixerApi.Repositories;
 using System.Threading.Tasks;
 
 namespace SpotifyMixerApi.Services
 {
     public class SpotifyPlaylistProvider : IPlaylistProvider
     {
-        private readonly ISpotifyService _spotifyService;
+        private readonly IPlaylistRepository _playlistRepository;
 
-        public SpotifyPlaylistProvider(ISpotifyService spotifyService)
+        public SpotifyPlaylistProvider(IPlaylistRepository playlistRepository)
         {
-            _spotifyService = spotifyService;
+            _playlistRepository = playlistRepository;
         }
 
         public async Task<SpotifyPlaylist> GetPlaylistAsync(string playlistId)
@@ -20,7 +21,7 @@ namespace SpotifyMixerApi.Services
                 throw new ArgumentException("Playlist ID cannot be null or empty", nameof(playlistId));
             }
 
-            return await _spotifyService.GetPlaylistAsync(playlistId);
+            return await _playlistRepository.GetPlaylistAsync(playlistId);
         }
     }
 } 

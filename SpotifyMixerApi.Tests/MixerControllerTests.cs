@@ -65,9 +65,14 @@ namespace SpotifyMixerApi.Tests
             return new PlaylistMixer();
         }
 
+        private IPlaylistProvider GetPlaylistProvider()
+        {
+            return new SpotifyPlaylistProvider(GetPlaylistRepository());
+        }
+
         private IPlaylistOrchestrator GetPlaylistOrchestrator()
         {
-            return new PlaylistOrchestrator(GetPlaylistRepository(), GetPlaylistMixer());
+            return new PlaylistOrchestrator(GetPlaylistProvider(), GetPlaylistMixer());
         }
 
     public static IEnumerable<object[]> ApiTestData()

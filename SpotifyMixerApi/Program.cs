@@ -36,13 +36,11 @@ else
 
 // Register playlist services
 builder.Services.AddScoped<IPlaylistMixer, PlaylistMixer>();
+builder.Services.AddScoped<IPlaylistProvider, SpotifyPlaylistProvider>();
 builder.Services.AddScoped<IPlaylistOrchestrator, PlaylistOrchestrator>();
 
 // Register repositories
 builder.Services.AddScoped<IPlaylistRepository, InMemoryPlaylistRepository>();
-
-// Register mock Spotify service for development/testing
-builder.Services.AddScoped<ISpotifyService, MockSpotifyService>();
 
 var app = builder.Build();
 

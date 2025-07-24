@@ -1,5 +1,4 @@
 using SpotifyMixerApi.Models;
-using SpotifyMixerApi.Repositories;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
@@ -14,18 +13,18 @@ namespace SpotifyMixerApi.Services
 
     public class PlaylistOrchestrator : IPlaylistOrchestrator
     {
-        private readonly IPlaylistRepository _playlistRepository;
+        private readonly IPlaylistProvider _playlistProvider;
         private readonly IPlaylistMixer _playlistMixer;
 
-        public PlaylistOrchestrator(IPlaylistRepository playlistRepository, IPlaylistMixer playlistMixer)
+        public PlaylistOrchestrator(IPlaylistProvider playlistProvider, IPlaylistMixer playlistMixer)
         {
-            _playlistRepository = playlistRepository;
+            _playlistProvider = playlistProvider;
             _playlistMixer = playlistMixer;
         }
 
         public async Task<SpotifyPlaylist> MixPlaylistAsync(string playlistId, Mixer mixer)
         {
-            var playlist = await _playlistRepository.GetPlaylistAsync(playlistId);
+            var playlist = await _playlistProvider.GetPlaylistAsync(playlistId);
             if (playlist == null || playlist.Tracks == null)
                 return null;
 
