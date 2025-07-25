@@ -9,10 +9,72 @@ public class PlaylistProviderTests
     private SpotifyPlaylistProvider GetProviderWithTestData()
     {
         var repo = new InMemoryPlaylistRepository();
-        repo.AddPlaylist("playlist-1", new SpotifyPlaylist { Id = "playlist-1", Name = "Test Playlist", Tracks = new SpotifyPlaylistTracks { Items = new System.Collections.Generic.List<SpotifyPlaylistTrackItem>() } });
+        repo.AddPlaylist("playlist-1", new SpotifyPlaylist
+        {
+            Id = "playlist-1",
+            Name = "Test Playlist",
+            Tracks = new SpotifyPlaylistTracks
+            {
+                Items = new List<SpotifyPlaylistTrackItem>
+                {
+                    new SpotifyPlaylistTrackItem
+                    {
+                        Track = new SpotifyTrack
+                        {
+                            Id = "track-1",
+                            Name = "Track 1",
+                            Popularity = 10,
+                            Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 1" } },
+                            Album = new SpotifyAlbum { Name = "Album 1" }
+                        }
+                    },
+                    new SpotifyPlaylistTrackItem
+                    {
+                        Track = new SpotifyTrack
+                        {
+                            Id = "track-2",
+                            Name = "Track 2",
+                            Popularity = 20,
+                            Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 2" } },
+                            Album = new SpotifyAlbum { Name = "Album 2" }
+                        }
+                    }
+                }
+            }
+        });
+
+        repo.AddPlaylist("playlist-2", new SpotifyPlaylist
+        {
+            Id = "playlist-2",
+            Name = "Another Playlist",
+            Tracks = new SpotifyPlaylistTracks
+            {
+                Items = new List<SpotifyPlaylistTrackItem>
+                {
+                    new SpotifyPlaylistTrackItem
+                    {
+                        Track = new SpotifyTrack
+                        {
+                            Id = "track-3",
+                            Name = "Track 3",
+                            Popularity = 30,
+                            Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 3" } },
+                            Album = new SpotifyAlbum { Name = "Album 3" }
+                        }
+                    }
+                }
+            }
+        });
+        
         return new SpotifyPlaylistProvider(repo);
     }
 
+    /// <summary>
+    /// Tests GetPlaylistAsync for various playlist IDs and expected outcomes.
+    /// </summary>
+    /// <param name="playlistId">The playlist ID to fetch. Can be a valid ID, null, empty, or not found.</param>
+    /// <param name="expectPlaylist">True if a playlist is expected to be returned; false otherwise.</param>
+    /// <param name="expectException">True if an ArgumentException is expected (for null or empty ID); false otherwise.</param>
     [Theory]
     [InlineData("playlist-1", true, false)] // valid id, expect playlist, not exception
     [InlineData(null, false, true)] // null id, expect exception

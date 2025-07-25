@@ -57,6 +57,14 @@ public class PlaylistOrchestratorTests
         };
     }
 
+    /// <summary>
+    /// Tests MixPlaylistAsync for various scenarios, including mixing, missing playlist, and null tracks.
+    /// </summary>
+    /// <param name="playlistId">The playlist ID to mix. Can be a valid ID, not found, or a playlist with null tracks.</param>
+    /// <param name="transforms">A list of playlist transforms to apply during mixing.</param>
+    /// <param name="expectResult">True if a mixed playlist is expected; false if null is expected.</param>
+    /// <param name="expectedName">The expected name of the mixed playlist, or null if no result is expected.</param>
+    /// <param name="expectedTrackIds">The expected track IDs in the mixed playlist, or null if no result is expected.</param>
     [Theory]
     [MemberData(nameof(OrchestratorTestData))]
     public async Task MixPlaylistAsync_Theory(string playlistId, List<IPlaylistTransform> transforms, bool expectResult, string expectedName, string[] expectedTrackIds)

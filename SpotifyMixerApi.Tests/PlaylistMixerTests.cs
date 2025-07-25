@@ -34,6 +34,11 @@ public class PlaylistMixerTests
         };
     }
 
+    /// <summary>
+    /// Tests MixPlaylist with various transforms and checks the resulting track IDs.
+    /// </summary>
+    /// <param name="transforms">A list of playlist transforms to apply (e.g., TakeTransform, AttributeTransform, OrderTransform).</param>
+    /// <param name="expectedIds">The expected track IDs in the resulting playlist after transforms are applied.</param>
     [Theory]
     [MemberData(nameof(MixerTestData))]
     public void MixPlaylist_Theory(List<IPlaylistTransform> transforms, string[] expectedIds)
