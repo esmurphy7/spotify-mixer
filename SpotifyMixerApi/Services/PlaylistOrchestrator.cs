@@ -6,11 +6,6 @@ using SpotifyMixerApi.Models.Spotify;
 
 namespace SpotifyMixerApi.Services
 {
-    public interface IPlaylistOrchestrator
-    {
-        Task<SpotifyPlaylist> MixPlaylistAsync(string playlistId, Mixer mixer);
-    }
-
     public class PlaylistOrchestrator : IPlaylistOrchestrator
     {
         private readonly IPlaylistProvider _playlistProvider;
