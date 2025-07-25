@@ -18,7 +18,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 // Register the repository abstraction
 if (builder.Environment.IsDevelopment())
 {
-    builder.Services.AddSingleton<IRepository<Mixer>>(provider =>
+    builder.Services.AddSingleton<IRepository<string, Mixer>>(provider =>
     {
         var config = provider.GetRequiredService<IConfiguration>();
         var connectionString = config["CosmosDb:ConnectionString"];
@@ -28,12 +28,14 @@ if (builder.Environment.IsDevelopment())
         var db = cosmosClient.CreateDatabaseIfNotExistsAsync(databaseId).GetAwaiter().GetResult();
         db.Database.CreateContainerIfNotExistsAsync(containerId, "/id").GetAwaiter().GetResult();
         var container = cosmosClient.GetContainer(databaseId, containerId);
-        return new CosmosDbRepository<Mixer>(container);
+        return new CosmosDbRepository<string, Mixer>(container);
     });
+    builder.Services.AddScoped<IRepository<string, SpotifyPlaylist>, InMemoryRepository<string, SpotifyPlaylist>>();
 }
 else
 {
-    builder.Services.AddSingleton<IRepository<Mixer>, InMemoryRepository<Mixer>>();
+    builder.Services.AddSingleton<IRepository<string, Mixer>, InMemoryRepository<string, Mixer>>();
+    builder.Services.AddScoped<IRepository<string, SpotifyPlaylist>, InMemoryRepository<string, SpotifyPlaylist>>();
 }
 
 // Register playlist services
@@ -42,7 +44,7 @@ builder.Services.AddScoped<IPlaylistProvider, SpotifyPlaylistProvider>();
 builder.Services.AddScoped<IPlaylistOrchestrator, PlaylistOrchestrator>();
 
 // Register repositories
-builder.Services.AddScoped<IRepository<SpotifyPlaylist>, InMemoryRepository<SpotifyPlaylist>>();
+
 
 var app = builder.Build();
 

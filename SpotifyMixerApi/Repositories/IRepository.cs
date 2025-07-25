@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 
 namespace SpotifyMixerApi.Repositories
 {
-    public interface IRepository<T>
+    public interface IRepository<TId, T>
     {
         Task<List<T>> GetAllAsync();
-        Task<T?> GetByIdAsync(string id);
-        Task AddAsync(T item);
-        Task UpdateAsync(T item);
-        Task DeleteAsync(string id);
+        Task<T?> GetAsync(TId id);
+        Task AddAsync(TId id, T item);
+        Task UpdateAsync(TId id, T item);
+        Task DeleteAsync(TId id);
     }
 } 

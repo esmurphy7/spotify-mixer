@@ -5,14 +5,9 @@ using System.Threading.Tasks;
 
 namespace SpotifyMixerApi.Repositories
 {
-    public class CosmosDbRepository<T> : IRepository<T> where T : class
+    public class CosmosDbRepository<TId, T> : IRepository<TId, T> where T : class
     {
         private readonly Container _container;
-        private static string GetId(T item)
-        {
-            var prop = typeof(T).GetProperty("id");
-            return prop?.GetValue(item)?.ToString() ?? throw new System.Exception("Object must have an 'id' property");
-        }
 
         public CosmosDbRepository(Container container)
         {
@@ -31,11 +26,11 @@ namespace SpotifyMixerApi.Repositories
             return results;
         }
 
-        public async Task<T?> GetByIdAsync(string id)
+        public async Task<T?> GetAsync(TId id)
         {
             try
             {
-                var response = await _container.ReadItemAsync<T>(id, new PartitionKey(id));
+                var response = await _container.ReadItemAsync<T>(id?.ToString(), new PartitionKey(id?.ToString()));
                 return response.Resource;
             }
             catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
@@ -44,19 +39,19 @@ namespace SpotifyMixerApi.Repositories
             }
         }
 
-        public async Task AddAsync(T item)
+        public async Task AddAsync(TId id, T item)
         {
-            await _container.CreateItemAsync(item, new PartitionKey(GetId(item)));
+            await _container.CreateItemAsync(item, new PartitionKey(id?.ToString()));
         }
 
-        public async Task UpdateAsync(T item)
+        public async Task UpdateAsync(TId id, T item)
         {
-            await _container.UpsertItemAsync(item, new PartitionKey(GetId(item)));
+            await _container.UpsertItemAsync(item, new PartitionKey(id?.ToString()));
         }
 
-        public async Task DeleteAsync(string id)
+        public async Task DeleteAsync(TId id)
         {
-            await _container.DeleteItemAsync<T>(id, new PartitionKey(id));
+            await _container.DeleteItemAsync<T>(id?.ToString(), new PartitionKey(id?.ToString()));
         }
     }
 } 

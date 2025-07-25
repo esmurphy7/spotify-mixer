@@ -9,10 +9,10 @@ namespace SpotifyMixerApi.Controllers
     [Route("[controller]")]
     public class MixersController : ControllerBase
     {
-        private readonly IRepository<Mixer> _repository;
+        private readonly IRepository<string, Mixer> _repository;
         private readonly IPlaylistOrchestrator _playlistOrchestrator;
 
-        public MixersController(IRepository<Mixer> repository, IPlaylistOrchestrator playlistOrchestrator)
+        public MixersController(IRepository<string, Mixer> repository, IPlaylistOrchestrator playlistOrchestrator)
         {
             _repository = repository;
             _playlistOrchestrator = playlistOrchestrator;
@@ -21,7 +21,7 @@ namespace SpotifyMixerApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetMixerById(string id)
         {
-            var mixer = await _repository.GetByIdAsync(id);
+            var mixer = await _repository.GetAsync(id);
             if (mixer == null)
             {
                 return NotFound();
@@ -40,13 +40,13 @@ namespace SpotifyMixerApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateMixer([FromBody] Mixer mixer)
         {
-            var existing = await _repository.GetByIdAsync(mixer.id);
+            var existing = await _repository.GetAsync(mixer.id);
             if (existing != null)
             {
                 return Conflict($"Mixer with ID {mixer.id} already exists.");
             }
 
-            await _repository.AddAsync(mixer);
+            await _repository.AddAsync(mixer.id, mixer);
             return CreatedAtAction(nameof(GetMixerById), new { id = mixer.id }, mixer);
         }
 
@@ -58,20 +58,20 @@ namespace SpotifyMixerApi.Controllers
                 return BadRequest("ID in URL and body do not match.");
             }
 
-            var existing = await _repository.GetByIdAsync(id);
+            var existing = await _repository.GetAsync(id);
             if (existing == null)
             {
                 return NotFound();
             }
 
-            await _repository.UpdateAsync(mixer);
+            await _repository.UpdateAsync(id, mixer);
             return Ok(mixer);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMixer(string id)
         {
-            var existing = await _repository.GetByIdAsync(id);
+            var existing = await _repository.GetAsync(id);
             if (existing == null)
             {
                 return NotFound();
@@ -83,7 +83,7 @@ namespace SpotifyMixerApi.Controllers
         [HttpPost("{id}/mix")]
         public async Task<IActionResult> MixPlaylist(string id)
         {
-            var mixer = await _repository.GetByIdAsync(id);
+            var mixer = await _repository.GetAsync(id);
             if (mixer == null)
             {
                 return NotFound($"Mixer with id '{id}' not found");

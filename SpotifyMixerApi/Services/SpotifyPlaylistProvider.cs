@@ -7,9 +7,9 @@ namespace SpotifyMixerApi.Services
 {
     public class SpotifyPlaylistProvider : IPlaylistProvider
     {
-        private readonly IRepository<SpotifyPlaylist> _playlistRepository;
+        private readonly IRepository<string, SpotifyPlaylist> _playlistRepository;
 
-        public SpotifyPlaylistProvider(IRepository<SpotifyPlaylist> playlistRepository)
+        public SpotifyPlaylistProvider(IRepository<string, SpotifyPlaylist> playlistRepository)
         {
             _playlistRepository = playlistRepository;
         }
@@ -21,7 +21,7 @@ namespace SpotifyMixerApi.Services
                 throw new ArgumentException("Playlist ID cannot be null or empty", nameof(playlistId));
             }
 
-            return await _playlistRepository.GetByIdAsync(playlistId);
+            return await _playlistRepository.GetAsync(playlistId);
         }
     }
 } 

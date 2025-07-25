@@ -14,20 +14,20 @@ namespace SpotifyMixerApi.Tests
 {
     public class MixerControllerTheoryTests
     {
-        private InMemoryRepository<Mixer> GetInitializedRepo()
+        private IRepository<string, Mixer> GetInitializedRepo()
         {
-            var repo = new InMemoryRepository<Mixer>();
-            repo.AddAsync(new Mixer { id = "1", Name = "A", SrcPlaylistId = "playlist-1", Transforms = new List<IPlaylistTransform> { new TakeTransform { Count = 2, FromStart = true } } }).Wait();
-            repo.AddAsync(new Mixer { id = "2", Name = "B", SrcPlaylistId = "playlist-2", Transforms = new List<IPlaylistTransform> { new AttributeTransform { AttributeName = "artist", AttributeValue = "Artist 1" } } }).Wait();
-            repo.AddAsync(new Mixer { id = "3", Name = "C", SrcPlaylistId = "", Transforms = new List<IPlaylistTransform> { new OrderTransform { AttributeName = "popularity", Ascending = false } } }).Wait();
+            var repo = new InMemoryRepository<string, Mixer>();
+            repo.AddAsync("1", new Mixer { id = "1", Name = "A", SrcPlaylistId = "playlist-1", Transforms = new List<IPlaylistTransform> { new TakeTransform { Count = 2, FromStart = true } } }).Wait();
+            repo.AddAsync("2", new Mixer { id = "2", Name = "B", SrcPlaylistId = "playlist-2", Transforms = new List<IPlaylistTransform> { new AttributeTransform { AttributeName = "artist", AttributeValue = "Artist 1" } } }).Wait();
+            repo.AddAsync("3", new Mixer { id = "3", Name = "C", SrcPlaylistId = "", Transforms = new List<IPlaylistTransform> { new OrderTransform { AttributeName = "popularity", Ascending = false } } }).Wait();
             return repo;
         }
 
-        private IRepository<SpotifyPlaylist> GetPlaylistRepository()
+        private IRepository<string, SpotifyPlaylist> GetPlaylistRepository()
         {
-            var repo = new InMemoryRepository<SpotifyPlaylist>();
+            var repo = new InMemoryRepository<string, SpotifyPlaylist>();
             // Add test playlists
-            repo.AddAsync(new SpotifyPlaylist
+            repo.AddAsync("playlist-1", new SpotifyPlaylist
             {
                 Id = "playlist-1",
                 Name = "Test Playlist 1",
@@ -43,7 +43,7 @@ namespace SpotifyMixerApi.Tests
                     }
                 }
             }).Wait();
-            repo.AddAsync(new SpotifyPlaylist
+            repo.AddAsync("playlist-2", new SpotifyPlaylist
             {
                 Id = "playlist-2",
                 Name = "Test Playlist 2",

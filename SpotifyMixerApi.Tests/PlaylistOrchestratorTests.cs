@@ -11,8 +11,8 @@ public class PlaylistOrchestratorTests
 {
     private SpotifyPlaylistProvider GetProviderWithTestData()
     {
-        var repo = new InMemoryRepository<SpotifyPlaylist>();
-        repo.AddAsync(new SpotifyPlaylist
+        var repo = new InMemoryRepository<string, SpotifyPlaylist>();
+        repo.AddAsync("playlist-1", new SpotifyPlaylist
         {
             Id = "playlist-1",
             Name = "Test Playlist",
@@ -25,7 +25,7 @@ public class PlaylistOrchestratorTests
                 }
             }
         }).Wait();
-        repo.AddAsync(new SpotifyPlaylist { Id = "playlist-2", Name = "No Tracks", Tracks = null }).Wait();
+        repo.AddAsync("playlist-2", new SpotifyPlaylist { Id = "playlist-2", Name = "No Tracks", Tracks = null }).Wait();
         return new SpotifyPlaylistProvider(repo);
     }
 
