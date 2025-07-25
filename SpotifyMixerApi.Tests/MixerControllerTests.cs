@@ -14,9 +14,9 @@ namespace SpotifyMixerApi.Tests
 {
     public class MixerControllerTheoryTests
     {
-        private InMemoryMixerRepository GetInitializedRepo()
+        private InMemoryRepository<Mixer> GetInitializedRepo()
         {
-            var repo = new InMemoryMixerRepository();
+            var repo = new InMemoryRepository<Mixer>();
             repo.AddAsync(new Mixer { id = "1", Name = "A", SrcPlaylistId = "playlist-1", Transforms = new List<IPlaylistTransform> { new TakeTransform { Count = 2, FromStart = true } } }).Wait();
             repo.AddAsync(new Mixer { id = "2", Name = "B", SrcPlaylistId = "playlist-2", Transforms = new List<IPlaylistTransform> { new AttributeTransform { AttributeName = "artist", AttributeValue = "Artist 1" } } }).Wait();
             repo.AddAsync(new Mixer { id = "3", Name = "C", SrcPlaylistId = "", Transforms = new List<IPlaylistTransform> { new OrderTransform { AttributeName = "popularity", Ascending = false } } }).Wait();

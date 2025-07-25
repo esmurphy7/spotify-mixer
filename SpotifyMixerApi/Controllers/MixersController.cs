@@ -9,10 +9,10 @@ namespace SpotifyMixerApi.Controllers
     [Route("[controller]")]
     public class MixersController : ControllerBase
     {
-        private readonly IMixerRepository _repository;
+        private readonly IRepository<Mixer> _repository;
         private readonly IPlaylistOrchestrator _playlistOrchestrator;
 
-        public MixersController(IMixerRepository repository, IPlaylistOrchestrator playlistOrchestrator)
+        public MixersController(IRepository<Mixer> repository, IPlaylistOrchestrator playlistOrchestrator)
         {
             _repository = repository;
             _playlistOrchestrator = playlistOrchestrator;

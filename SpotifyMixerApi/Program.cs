@@ -1,6 +1,7 @@
 using SpotifyMixerApi.Repositories;
 using SpotifyMixerApi.Services;
 using Microsoft.Azure.Cosmos;
+using SpotifyMixerApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +17,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 // Register the repository abstraction
 if (builder.Environment.IsDevelopment())
 {
-    builder.Services.AddSingleton<IMixerRepository>(provider =>
+    builder.Services.AddSingleton<IRepository<Mixer>>(provider =>
     {
         var config = provider.GetRequiredService<IConfiguration>();
         var connectionString = config["CosmosDb:ConnectionString"];
@@ -26,12 +27,12 @@ if (builder.Environment.IsDevelopment())
         var db = cosmosClient.CreateDatabaseIfNotExistsAsync(databaseId).GetAwaiter().GetResult();
         db.Database.CreateContainerIfNotExistsAsync(containerId, "/id").GetAwaiter().GetResult();
         var container = cosmosClient.GetContainer(databaseId, containerId);
-        return new CosmosDbMixerRepository(container);
+        return new CosmosDbRepository<Mixer>(container);
     });
 }
 else
 {
-    builder.Services.AddSingleton<IMixerRepository, InMemoryMixerRepository>();
+    builder.Services.AddSingleton<IRepository<Mixer>, InMemoryRepository<Mixer>>();
 }
 
 // Register playlist services
