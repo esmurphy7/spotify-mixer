@@ -23,11 +23,11 @@ namespace SpotifyMixerApi.Tests
             return repo;
         }
 
-        private IPlaylistRepository GetPlaylistRepository()
+        private IRepository<SpotifyPlaylist> GetPlaylistRepository()
         {
-            var repo = new InMemoryPlaylistRepository();
+            var repo = new InMemoryRepository<SpotifyPlaylist>();
             // Add test playlists
-            repo.AddPlaylist("playlist-1", new SpotifyPlaylist
+            repo.AddAsync(new SpotifyPlaylist
             {
                 Id = "playlist-1",
                 Name = "Test Playlist 1",
@@ -42,8 +42,8 @@ namespace SpotifyMixerApi.Tests
                         new SpotifyPlaylistTrackItem { Track = new SpotifyTrack { Id = "5", Name = "Mock Track 5", Popularity = 70, Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 5" } }, Album = new SpotifyAlbum { Name = "Album 5" } } }
                     }
                 }
-            });
-            repo.AddPlaylist("playlist-2", new SpotifyPlaylist
+            }).Wait();
+            repo.AddAsync(new SpotifyPlaylist
             {
                 Id = "playlist-2",
                 Name = "Test Playlist 2",
@@ -56,7 +56,7 @@ namespace SpotifyMixerApi.Tests
                         new SpotifyPlaylistTrackItem { Track = new SpotifyTrack { Id = "8", Name = "Pop Track 1", Popularity = 90, Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Pop Artist 1" } }, Album = new SpotifyAlbum { Name = "Pop Album 1" } } }
                     }
                 }
-            });
+            }).Wait();
             return repo;
         }
 
