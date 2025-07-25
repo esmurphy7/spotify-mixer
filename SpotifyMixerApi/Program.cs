@@ -2,6 +2,7 @@ using SpotifyMixerApi.Repositories;
 using SpotifyMixerApi.Services;
 using Microsoft.Azure.Cosmos;
 using SpotifyMixerApi.Models;
+using SpotifyMixerApi.Models.Spotify;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,7 +42,7 @@ builder.Services.AddScoped<IPlaylistProvider, SpotifyPlaylistProvider>();
 builder.Services.AddScoped<IPlaylistOrchestrator, PlaylistOrchestrator>();
 
 // Register repositories
-builder.Services.AddScoped<IPlaylistRepository, InMemoryPlaylistRepository>();
+builder.Services.AddScoped<IRepository<SpotifyPlaylist>, InMemoryRepository<SpotifyPlaylist>>();
 
 var app = builder.Build();
 

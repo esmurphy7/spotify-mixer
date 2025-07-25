@@ -8,42 +8,9 @@ public class PlaylistProviderTests
 {
     private SpotifyPlaylistProvider GetProviderWithTestData()
     {
-        var repo = new InMemoryPlaylistRepository();
-        repo.AddPlaylist("playlist-1", new SpotifyPlaylist
-        {
-            Id = "playlist-1",
-            Name = "Test Playlist",
-            Tracks = new SpotifyPlaylistTracks
-            {
-                Items = new List<SpotifyPlaylistTrackItem>
-                {
-                    new SpotifyPlaylistTrackItem
-                    {
-                        Track = new SpotifyTrack
-                        {
-                            Id = "track-1",
-                            Name = "Track 1",
-                            Popularity = 10,
-                            Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 1" } },
-                            Album = new SpotifyAlbum { Name = "Album 1" }
-                        }
-                    },
-                    new SpotifyPlaylistTrackItem
-                    {
-                        Track = new SpotifyTrack
-                        {
-                            Id = "track-2",
-                            Name = "Track 2",
-                            Popularity = 20,
-                            Artists = new List<SpotifyArtist> { new SpotifyArtist { Name = "Artist 2" } },
-                            Album = new SpotifyAlbum { Name = "Album 2" }
-                        }
-                    }
-                }
-            }
-        });
-
-        repo.AddPlaylist("playlist-2", new SpotifyPlaylist
+        var repo = new InMemoryRepository<SpotifyPlaylist>();
+        repo.AddAsync(new SpotifyPlaylist { Id = "playlist-1", Name = "Test Playlist", Tracks = new SpotifyPlaylistTracks { Items = new System.Collections.Generic.List<SpotifyPlaylistTrackItem>() } }).Wait();
+        repo.AddAsync(new SpotifyPlaylist
         {
             Id = "playlist-2",
             Name = "Another Playlist",
@@ -64,8 +31,7 @@ public class PlaylistProviderTests
                     }
                 }
             }
-        });
-        
+        }).Wait();
         return new SpotifyPlaylistProvider(repo);
     }
 
