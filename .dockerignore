@@ -1,0 +1,29 @@
+# Git files
+.git
+.gitignore
+
+# Build outputs
+**/bin/
+**/obj/
+
+# Test projects
+**/SpotifyMixerApi.Tests/
+
+# IDE files
+.vscode/
+.vs/
+
+# Docker files
+Dockerfile
+.dockerignore
+
+# Documentation
+README.md
+*.md
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp 
