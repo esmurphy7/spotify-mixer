@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "acrName": {
+      "value": "spotifymixeracr"
+    },
+    "location": {
+      "value": "East US"
+    },
+    "sku": {
+      "value": "Standard"
+    },
+    "enableAdminUser": {
+      "value": true
+    },
+    "publicNetworkAccess": {
+      "value": "Enabled"
+    },
+    "anonymousPullEnabled": {
+      "value": false
+    },
+    "dataEndpointEnabled": {
+      "value": false
+    },
+    "enableRetentionPolicy": {
+      "value": true
+    },
+    "retentionDays": {
+      "value": 7
+    },
+    "tags": {
+      "value": {
+        "Environment": "Development",
+        "Project": "SpotifyMixer",
+        "Owner": "YourName"
+      }
+    }
+  }
+} 
