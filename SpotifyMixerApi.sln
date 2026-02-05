@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpotifyMixerApi", "SpotifyMixerApi\SpotifyMixerApi.csproj", "{0BE81EA0-99ED-E302-09CD-A4200BA1DCE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpotifyMixerApi.Tests", "SpotifyMixerApi.Tests\SpotifyMixerApi.Tests.csproj", "{A50EADF5-E6B0-628E-6C42-ECACB299AE1B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0BE81EA0-99ED-E302-09CD-A4200BA1DCE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BE81EA0-99ED-E302-09CD-A4200BA1DCE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BE81EA0-99ED-E302-09CD-A4200BA1DCE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BE81EA0-99ED-E302-09CD-A4200BA1DCE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A50EADF5-E6B0-628E-6C42-ECACB299AE1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A50EADF5-E6B0-628E-6C42-ECACB299AE1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A50EADF5-E6B0-628E-6C42-ECACB299AE1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A50EADF5-E6B0-628E-6C42-ECACB299AE1B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {474CD3E0-2CE4-4FE8-A301-F40F58F83682}
+	EndGlobalSection
+EndGlobal

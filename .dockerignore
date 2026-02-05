@@ -6,9 +6,6 @@
 **/bin/
 **/obj/
 
-# Test projects
-**/SpotifyMixerApi.Tests/
-
 # IDE files
 .vscode/
 .vs/
